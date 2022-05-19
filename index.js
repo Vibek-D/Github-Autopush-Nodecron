@@ -36,7 +36,7 @@ app.use(cors(corsOptions));
 
 cron.schedule("*/1 * * * *", () => {
   console.log("Running a task every minute");
-  
+
   let data = `\nNew commit ${randomNumberInRange(1, 10)}`;
   fs.appendFileSync("githubPushFile.txt", data, "utf8");
 
