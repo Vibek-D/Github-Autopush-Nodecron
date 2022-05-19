@@ -43,7 +43,7 @@ cron.schedule("*/1 * * * *", () => {
   let randomPushGithub = Math.floor(Math.random() * (3 - 1) + 1);
   if (randomPushGithub === 1) {
     shell.exec(
-      `git add githubPushFile.txt && git commit -m "autoCommit ${shortid.generate()}" && git push origin master`
+      `git add githubPushFile.txt && git commit -m "autoCommit ${shortid.generate()}" && git push`
     );
   }
 });
