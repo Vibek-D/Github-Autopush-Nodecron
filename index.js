@@ -1,11 +1,24 @@
 const expressApp = require("express");
 let app = expressApp();
-const cors = require('cors');
-const Ddos = require('ddos');
-const shell = require('shelljs');
-const bodyParser = require('body-parser');
+const fs = require("fs");
+const cors = require("cors");
+const Ddos = require("ddos");
+const shell = require("shelljs");
+const cron = require("node-cron");
+const bodyParser = require("body-parser");
 const { whitelist, ddosConfig } = require("./config");
 
+function randomNumberInRange(min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+let data = `\nNew commit ${randomNumberInRange(1, 10)}`;
+fs.appendFile("githubPushFile.txt", data, "utf8", function (err) {
+  if (err) throw err;
+  console.log("Data is appended to file successfully");
+});
+
+const ddosInstance = new Ddos(ddosConfig);
 const corsOptions = {
   exposedHeaders: "authorization, x-refresh-token, x-token-expiry-time",
   origin: (origin, callback) => {
@@ -17,8 +30,6 @@ const corsOptions = {
   },
 };
 
-const ddosInstance = new Ddos(ddosConfig);
-
 // npm module for preventing ddos attack
 app.use(ddosInstance.express);
 
@@ -28,11 +39,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
+cron.schedule("* * * * *", () => {
+  console.log("running a task every minute");
+});
+
 shell.exec('git commit -am "autoCommit"');
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.send("The server was pinged");
-})
+});
 
 app.listen(5000, () => console.log(`Server started on port 5000`));
 
