@@ -12,6 +12,8 @@ function randomNumberInRange(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+console.log(randomNumberInRange(1, 10));
+
 let data = `\nNew commit ${randomNumberInRange(1, 10)}`;
 fs.appendFile("githubPushFile.txt", data, "utf8", function (err) {
   if (err) throw err;
