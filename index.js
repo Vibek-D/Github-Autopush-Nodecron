@@ -1,6 +1,8 @@
-const app = require("express");
+const expressApp = require("express");
+let app = expressApp();
 const cors = require('cors');
 const Ddos = require('ddos');
+const shell = require('shelljs');
 const bodyParser = require('body-parser');
 const { whitelist, ddosConfig } = require("./config");
 
@@ -26,6 +28,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
-app.listen(5000, () => logger.info(`Server started on port ${port}`));
+shell.exec('git commit -am "autoCommit"');
+
+app.get('/', (req, res) => {
+  res.send("The server was pinged");
+})
+
+app.listen(5000, () => console.log(`Server started on port 5000`));
 
 module.exports = app;
