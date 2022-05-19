@@ -5,20 +5,13 @@ const cors = require("cors");
 const Ddos = require("ddos");
 const shell = require("shelljs");
 const cron = require("node-cron");
+const shortid = require("shortid");
 const bodyParser = require("body-parser");
 const { whitelist, ddosConfig } = require("./config");
 
 function randomNumberInRange(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
-
-console.log(randomNumberInRange(1, 10));
-
-let data = `\nNew commit ${randomNumberInRange(1, 10)}`;
-fs.appendFile("githubPushFile.txt", data, "utf8", function (err) {
-  if (err) throw err;
-  console.log("Data is appended to file successfully");
-});
 
 const ddosInstance = new Ddos(ddosConfig);
 const corsOptions = {
@@ -41,11 +34,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
-cron.schedule("* * * * *", () => {
-  console.log("running a task every minute");
-});
+cron.schedule("*/1 * * * *", () => {
+  console.log("Running a task every minute");
+  
+  let data = `\nNew commit ${randomNumberInRange(1, 10)}`;
+  fs.appendFileSync("githubPushFile.txt", data, "utf8");
 
-shell.exec('git commit -am "autoCommit"');
+  let randomPushGithub = Math.floor(Math.random() * (3 - 1) + 1);
+  if (randomPushGithub === 1) {
+    shell.exec(
+      `git add githubPushFile.txt git commit -m "autoCommit ${shortid.generate()}"`
+    );
+  }
+});
 
 app.get("/", (req, res) => {
   res.send("The server was pinged");
